@@ -107,29 +107,25 @@ AFRAME.registerComponent('stretchable', inherit(base, {
   },
   stretchBody: function (el, deltaStretch) {
     if (!el.body) { return }
-    if (el.getAttribute('ammo-body')) {
-      //TODO: 
-    } else {
-      let physicsShape
-      let offset
-      for (let i = 0; i < el.body.shapes.length; i++) {
-        physicsShape = el.body.shapes[i]
-        if (physicsShape.halfExtents) {
-          physicsShape.halfExtents
-              .scale(deltaStretch, physicsShape.halfExtents)
-          physicsShape.updateConvexPolyhedronRepresentation()
-        } else if (physicsShape.radius) {
-          physicsShape.radius *= deltaStretch
-          physicsShape.updateBoundingSphereRadius()
-        } else if (!this.shapeWarned) {
-          console.warn('Unable to stretch physics body: unsupported shape')
-          this.shapeWarned = true
-        }
-        // also move offset to match scale change
-        offset = el.body.shapeOffsets[i]
-        offset.scale(deltaStretch, offset)
+    let physicsShape
+    let offset
+    for (let i = 0; i < el.body.shapes.length; i++) {
+      physicsShape = el.body.shapes[i]
+      if (physicsShape.halfExtents) {
+        physicsShape.halfExtents
+            .scale(deltaStretch, physicsShape.halfExtents)
+        physicsShape.updateConvexPolyhedronRepresentation()
+      } else if (physicsShape.radius) {
+        physicsShape.radius *= deltaStretch
+        physicsShape.updateBoundingSphereRadius()
+      } else if (!this.shapeWarned) {
+        console.warn('Unable to stretch physics body: unsupported shape')
+        this.shapeWarned = true
       }
-      el.body.updateBoundingRadius()
+      // also move offset to match scale change
+      offset = el.body.shapeOffsets[i]
+      offset.scale(deltaStretch, offset)
     }
+    el.body.updateBoundingRadius()
   }
 }))
